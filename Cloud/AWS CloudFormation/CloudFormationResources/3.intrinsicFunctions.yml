@@ -1,0 +1,10 @@
+Parameters:
+  BucketNameParameter:
+    Type: String
+    Description: "A bucket name has to be set"
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketNameParameter # Intrinsic function referencing
