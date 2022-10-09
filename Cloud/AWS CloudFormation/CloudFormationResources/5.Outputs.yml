@@ -1,0 +1,10 @@
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "this-is-output-func"
+
+Outputs:
+  BucketArn:
+    Description: "This is arn of bucket"
+    Value: !GetAtt S3Bucket.Arn

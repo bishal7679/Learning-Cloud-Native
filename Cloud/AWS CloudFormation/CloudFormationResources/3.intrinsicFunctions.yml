@@ -7,4 +7,5 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketNameParameter # Intrinsic function referencing
+      # BucketName: !Ref BucketNameParameter # Intrinsic function referencing
+      BucketName: !Join ["-", [!Ref BucketNameParameter, "dummy", "suffix"]]
