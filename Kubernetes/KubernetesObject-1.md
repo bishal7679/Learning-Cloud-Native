@@ -86,3 +86,10 @@
 - ### `Init Containers` :- 
   - Init containers are just like regular containers, but they run to completion and run before the main container starts. There are various use cases for init         containers, such as init containers can contain certain utilities or custom code for the setup that is not present for the app container. 
   - It can also change the file system before starting the app container based on certain logic. It can also be used to limit the attack surface by keeping certain     tools as part of init containers. Init containers can also delay the start of the main containers by having some precondition check; unless they are met, it         will keep trying the init containers.
+  
+- ### `Container Probes` :-
+  - The kubelet uses `liveness probes` to know when to restart a container. For example, liveness probes could catch a deadlock, where an application is running,       but unable to make progress. Restarting a container in such a state can help to make the application more available despite bugs.
+  - The kubelet uses `readiness probes` to know when a container is ready to start accepting traffic. A Pod is considered ready when all of its containers are           ready.One use of this signal is to control which Pods are used as backends for Services. When a Pod is not ready, it is removed from Service load balancers.
+  - The kubelet uses `startup probes` to know when a container application has started. If such a probe is configured, it disables liveness and readiness checks         until it succeeds, making sure those probes don't interfere with the application startup. This can be used to adopt liveness checks on slow starting containers,     avoiding them getting killed by the kubelet before they are up and running.
+
+  ![](https://imgur.com/hIMoWKZ.png)
