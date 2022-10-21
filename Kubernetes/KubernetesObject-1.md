@@ -2,12 +2,12 @@
 
 ---
 
-- ### Pods:-
+- ### `Pods` :-
   - It is the smallest unit in Kubernetes. 
   - It is a group of one or more containers and a specification telling how the containers will be running inside the Kubernetes cluster.
   - A pod gets its own IP address.
 
-  ![]()
+  ![](https://imgur.com/dNqrrkc.png)
   
   ```bash
     # to get the running pods inside the cluster
@@ -65,7 +65,7 @@
   ---
   
    - ### Lifecycle of a Pod :- 
-     - When we give a command, kubectl apply -f or create -f, and provide a YAML file, it's first converted to JSON and sent to API Server. Here, the request is authenticated using our kube config credentials, and then it's authorized whether the user is actually authorized to perform this particular command to create a pod. Then if any admission controllers are there, they are checked before it gets persisted to etcd datastore.
+     - When we give a command, `kubectl apply -f` or `create -f`, and provide a YAML file, it's first converted to JSON and sent to API Server. Here, the request is authenticated using our kube config credentials, and then it's authorized whether the user is actually authorized to perform this particular command to create a pod. Then if any admission controllers are there, they are checked before it gets persisted to etcd datastore.
        Now, after it is persisted in the etcd datastore, it goes to pending state. Then the scheduler pitches in and tries to find the best match for the node where it has to be spawned. It will go through the cluster and find the best fit node based on the resources, etc., and if the image is already present on the node because that has some reference. Once it gets the node, it will fill the label spec node name and send it to the API server, and now, that particular request is also stored in etcd.
      
    - ### API server in a pod's lifecycle :- 
@@ -78,5 +78,11 @@
        
    - ### Hooks and its usages :- 
      - There are some of the hooks that can be implemented. For example, if there are some actions that you want to perform after the main container just starts, you can have a post-start hook, and if you want to perform before the main container gets terminated, you will have to have a pre-stop hook. There is also something called the init container that will be running before actually starting the main container.
-   
- - ### Init Containers
+
+   ![](https://imgur.com/njNTvAb.png)
+
+---
+
+- ### `Init Containers` :- 
+  - Init containers are just like regular containers, but they run to completion and run before the main container starts. There are various use cases for init         containers, such as init containers can contain certain utilities or custom code for the setup that is not present for the app container. 
+  - It can also change the file system before starting the app container based on certain logic. It can also be used to limit the attack surface by keeping certain     tools as part of init containers. Init containers can also delay the start of the main containers by having some precondition check; unless they are met, it         will keep trying the init containers.
