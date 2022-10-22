@@ -93,3 +93,97 @@
   - The kubelet uses `startup probes` to know when a container application has started. If such a probe is configured, it disables liveness and readiness checks         until it succeeds, making sure those probes don't interfere with the application startup. This can be used to adopt liveness checks on slow starting containers,     avoiding them getting killed by the kubelet before they are up and running.
 
   ![](https://imgur.com/hIMoWKZ.png)
+
+---
+
+- ### `Deployment` :-
+   - Creating Deployment by command method
+     
+     ```bash
+     kubectl create deployment demo --image=nginx --replicas=3 --port=80
+     ```
+     it will create a deployment named "demo" with 3 replicas and image is nginx:latest
+   - Get the deployment list
+
+     ```bash
+     kubectl get deploy
+     ```
+   - We can see rolling out of a deployment, and we can check the status using this command
+   
+     ```bash
+     kubectl rollout status deployment demo
+     ```
+   - Setting an image in a deployment
+   
+     ```bash
+     kubectl set image deployment/demo --nginx=nginx:1.15.0 --record
+     ```
+   - What happens when a wrong image is set in a deployment?
+   
+     ```bash
+     kubectl set image deployment/demo --nginx=nginx:1.15.abc --record
+     ```
+     we can see that the pods are running, but it created an extra pod. So the max surge came into the picture, creating an extra pod, and the image ErrPull came.        Hence, this pod never got ready, and that's why the previous one never got terminated.
+   - Rollbacking from a wrong image deployment
+     - We can first see the status through the 
+     
+     ```bash
+     kubectl rollout history deployment demo
+     ```
+     
+     ```bash
+     kubectl rollout undo deployment demo --to-revision=2
+     ```
+     
+   - Scaling a deployment
+    
+     ```bash
+     kubectl scale deployment demo --replicas=5
+     ```
+   - Delete and Edit a deployment
+   
+     ```bash
+     kubectl delete deployment demo
+     ```
+     
+     ```bash
+     kubectl edit deployment demo
+     ```
+---
+ - ### `StatefulSets` :- 
+    - StatefulSet is a Kubernetes object which is used for Stateful applications such as databases. However, there are cases just like databases where we need           persistence, or we need to store the state of the application, which Deployments cannot serve.
+
+    ![](https://imgur.com/W0U69tJ.png)
+    - Creating and scaling up a StatefulSet 
+       - We will use the `kubectl get storageclass` command, and we can see that we are using a rancher local path provisioner, which is very simple to install with          the YAML file. [`checkout`](https://github.com/rancher/local-path-provisioner)
+       - now create the statefulset [statefulset.yaml](https://github.com/bishal7679/Learning-Cloud-Native/blob/main/Kubernetes/StatefulSet/StatefulSet.yml)
+
+         ```bash
+         kubectl create -f statefulset.yaml
+         ```
+         
+         ```bash
+         kubectl get statefulset
+         ```
+         
+         We can see that the name is the web. Hence, we define the name as web, and the pod names are very simple, web-0 and web-1.
+         
+       - scaling up to 3 relicas
+
+         ```bash
+         kubectl scale --replicas=3 statefulset/web
+         ```
+    - > **Note**:- whenever we scale up the replicas of statefulsets, it gets replicated with sticky order like web-0, web-1, web-2 etc. and next replica will be not created until and unless previous replica got created succesfully. Likewise pods of statefulsets gets deleted in reverse order like web-2, web-1 and then web-0 and one pod will be not deleted until and unless its next replica got deleted successfully!
+    - Now, we have over here that whenever we create a headless service, it will also have created a network entity, so it has its own DNS name that can be referred       to. How we can check that is we can use the curl command. Now go inside a pod and run this command 
+
+      ```bash
+      curl web-0.nginx.default.svc.cluster.local
+      ```
+      you will see hello world!
+    - Scaling down a StatefulSet
+
+      ```bash
+      kubectl scale --replicas=1 statefulset/web
+      ```
+      
+      we can see that the two pods web-2 & web-1 is getting deleted, and we only have one pod remaining, which is web-0.
