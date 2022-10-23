@@ -187,3 +187,31 @@
       ```
       
       we can see that the two pods web-2 & web-1 is getting deleted, and we only have one pod remaining, which is web-0.
+---
+ - ### `Daemonset` :- 
+    - DaemonSets in Kubernetes ensure that a copy of the pod runs on all or some nodes. Whenever a new node joins, the same copy of the pod is pinned over there,         and whenever a node is removed from the cluster, the pod also gets removed.
+    - The DaemonSet controller controls DaemonSet, which is scheduled on all the pods, except for the ones where you cannot schedule the pods, or it's not                 schedulable, like on a master node.
+    - first see what all DaemonSets we already have running on our cluster by this below command :- 
+
+      ```bash
+      kubectl get ds -A
+      ```
+      
+      create a daemonset by the yaml manifest
+      
+      ```bash
+      kubectl create -f ds.yaml
+      ```
+      
+      ```bash
+      kubectl get ds
+      ```
+      
+      ```bash
+      kubectl logs -f #daemonset-pod-name here
+      ```
+      
+      ```bash
+      kubectl get ds -owide
+      ```
+---
