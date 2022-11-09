@@ -2,14 +2,29 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
+	"github.com/bishal7679/Serving-html-template/pkg/config"
 	"github.com/bishal7679/Serving-html-template/pkg/handlers"
+	"github.com/bishal7679/Serving-html-template/pkg/render"
 )
 
 const portNumber = ":8080"
 
 func main() {
+	var app config.AppConfig
+
+	tc, err := render.CreateTemplateCache()
+	if err != nil {
+		log.Fatal("Cannot create template cache")
+	}
+
+	app.TemplateCache = tc
+
+	// sending the stored tc on app var to NewTemplate
+	render.NewTemplates(&app)
+
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/about", handlers.About)
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
