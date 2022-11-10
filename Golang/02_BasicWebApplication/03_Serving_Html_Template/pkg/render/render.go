@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/bishal7679/Serving-html-template/pkg/config"
+	"github.com/bishal7679/Serving-html-template/pkg/models"
 )
 
 var functions = template.FuncMap{}
@@ -20,10 +21,20 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-// this function is used to render the template
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
 
-	tc := app.TemplateCache
+// this function is used to render the template
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+
+	var tc map[string]*template.Template
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+
+		tc, _ = CreateTemplateCache()
+	}
 	// // get the template cache from app config
 	// tc, err := CreateTemplateCache()
 	// if err != nil {
@@ -37,7 +48,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	td = AddDefaultData(td)
+
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 
