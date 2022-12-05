@@ -1,0 +1,67 @@
+pipeline {
+  agent any
+    stages {
+      stage('Git-Checkout') {
+        steps {
+          echo "Checking out from git repo"
+          git 'https://github.com/bishal7679/Pipeline_Script.git'
+        }
+      }
+      
+      stage('env-workspace') {
+        steps {
+          echo "setting the env workspace executable!"
+          sh "chmod +x -R ${env.WORKSPACE}"
+          
+        }
+      }
+
+      stage('Build') {
+        steps {
+          echo "Building the checked-out project"
+          sh "./Build.sh"
+        }
+      }
+      
+      stage('Unit-Test') {
+        steps {
+          echo "Running JUnit Tests"
+          sh "./Unit.sh"
+        }
+      }
+      
+      stage('Quality-Gates') {
+        steps {
+          echo "Verifying Quality Gates"
+          sh "./Quality.sh"
+        }
+      }
+      
+      stage('Deploy') {
+        steps {
+          echo "Deploying to stage environment to more tests!"
+          sh "./Deploy.sh"
+        }
+      }
+      
+      
+    }
+  post {
+    always {
+        echo 'This will always run'
+    }
+    success {
+        echo 'This will run if it is successful!'
+    }
+    failure {
+        echo 'This will run if it is failed!'
+    }
+    unstable {
+        echo 'This will run if the run was marked as unstable'
+    }
+    changed {
+        echo 'This will run only if the state of the pipeline has changed'
+        echo 'For example if the pipeline was previously failing but is now getting successful!'
+    }
+  }
+}

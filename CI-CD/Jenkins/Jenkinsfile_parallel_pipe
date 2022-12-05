@@ -1,0 +1,43 @@
+pipeline {
+	agent none
+		stages {
+			stage('Non-Parallel stage') {
+				agent {
+					label 'controller'
+				}
+
+				steps {
+					echo 'This stage will be executed first in master node'
+				}
+			}
+
+
+			stage('Run tests Parallel stage') {
+				parallel {
+					stage ('Test On Linux agent') {
+						agent {
+							label 'Linux_Slave'
+						}
+
+						steps {
+              echo "Checking out from git repo"
+              git 'https://github.com/bishal7679/Pipeline_Script.git'
+              sh "chmod +x -R ${env.WORKSPACE}"
+              sh "./Build.sh"
+
+            }
+					}
+
+					stage ('Test On master') {
+						agent {
+							label "controller"
+						}
+
+						steps {
+							echo "Task on master for parallel"
+						}
+					}
+				}
+			}
+		}
+}
