@@ -25,8 +25,9 @@ func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 	return td
 }
 
-// this function is used to render the template
-func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+//this function is used to render the template
+
+func RendersTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -76,16 +77,18 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	for _, page := range pages {
 		name := filepath.Base(page)
+		// fmt.Println("this is curerent page", page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
 		}
 
-		match, err := filepath.Glob("./templates/*.layout.html")
-		if err != nil {
-			return myCache, err
+		match, errors := filepath.Glob("./templates/*.layout.html")
+		if errors != nil {
+			return myCache, errors
 		}
 
+		fmt.Println(len(match))
 		if len(match) > 0 {
 			ts, err = ts.ParseGlob("./templates/*.layout.html")
 			if err != nil {

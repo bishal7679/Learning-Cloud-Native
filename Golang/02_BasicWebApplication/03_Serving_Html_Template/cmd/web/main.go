@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -12,7 +13,7 @@ import (
 	"github.com/bishal7679/Serving-html-template/pkg/render"
 )
 
-const portNumber = ":8080"
+const portNumber = ":8000"
 
 var app config.AppConfig
 var session *scs.SessionManager
@@ -31,6 +32,7 @@ func main() {
 	app.Session = session
 
 	tc, err := render.CreateTemplateCache()
+	fmt.Println(len(tc))
 	if err != nil {
 		log.Fatal("Cannot create template cache")
 	}
