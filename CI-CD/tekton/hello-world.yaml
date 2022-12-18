@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: hello
+spec:
+  params:
+    # name of the parameter
+    - name: person
+      description: Name of the person to greet
+      default: world
+      type: string
+  steps:
+    - name: say-hello
+      image: registry.access.redhat.com/ubi8/ubi
+      command:
+        - /bin/bash
+      args: ["-c", "echo Hello $(params.person)"]
